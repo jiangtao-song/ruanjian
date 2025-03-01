@@ -28,29 +28,15 @@ PKG_INSTALL:=1
 
 include $(INCLUDE_DIR)/package.mk
 
-define Package/shadowsocksr-libev
-	SECTION:=net
-	CATEGORY:=Network
-	SUBMENU:=Web Servers/Proxies
-	TITLE:=Lightweight Secured Socks5 Proxy
-	URL:=https://github.com/shadowsocksrr/shadowsocksr-libev
-	DEPENDS:=+libopenssl +libpthread +libpcre +zlib
-endef
-
-Package/shadowsocksr-libev-server = $(Package/shadowsocksr-libev)
-Package/shadowsocksr-libev-alt = $(Package/shadowsocksr-libev)
-Package/shadowsocksr-libev-ssr-local = $(Package/shadowsocksr-libev)
-
-CONFIGURE_ARGS += --disable-documentation --disable-ssp --disable-assert
-
-define Package/shadowsocksr-libev/install
-	$(INSTALL_DIR) $(1)/usr/bin
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/src/ss-redir $(1)/usr/bin/ssr-redir
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/src/ss-local $(1)/usr/bin/ssr-local
-	$(LN) ssr-local $(1)/usr/bin/ssr-tunnel
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/server/ss-check $(1)/usr/bin/ssr-check
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/server/ss-server $(1)/usr/bin/ssr-server
-endef
+define Package/shadowsocksr-libev/Default
+  define Package/shadowsocksr-libev-ssr-$(1)
+    SECTION:=net
+    CATEGORY:=Network
+    SUBMENU:=Web Servers/Proxies
+    TITLE:=shadowsocksr-libev ssr-$(1)
+    URL:=https://github.com/shadowsocksrr/shadowsocksr-libev
+    DEPENDS:=+libev +libsodium +libopenssl +libpthread +libpcre2 +libudns +zlib
+  endef
 
 define Package/shadowsocksr-libev-alt/install
 	$(INSTALL_DIR) $(1)/usr/bin
@@ -63,13 +49,33 @@ define Package/shadowsocksr-libev-server/install
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/server/ss-server $(1)/usr/bin/ssr-server
 endef
 
-define Package/shadowsocksr-libev-ssr-local/install
-	$(INSTALL_DIR) $(1)/usr/bin
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/src/ss-local $(1)/usr/bin/ssr-local
-	$(LN) ssr-local $(1)/usr/bin/ssr-tunnel
+  define Package/shadowsocksr-libev-ssr-$(1)/install
+	$$(INSTALL_DIR) $$(1)/usr/bin
+	$$(INSTALL_BIN) $$(PKG_INSTALL_DIR)/usr/bin/ss-$(1) $$(1)/usr/bin/ssr-$(1)
+  endef
 endef
 
-$(eval $(call BuildPackage,shadowsocksr-libev))
+SHADOWSOCKSR_COMPONENTS:=check local nat redir server
+define shadowsocksr-libev/templates
+  $(foreach component,$(SHADOWSOCKSR_COMPONENTS),
+    $(call Package/shadowsocksr-libev/Default,$(component))
+  )
+endef
+$(eval $(call shadowsocksr-libev/templates))
+Package/shadowsocksr-libev-server = $(Package/shadowsocksr-libev)
+Package/shadowsocksr-libev-alt = $(Package/shadowsocksr-libev)
+
+CONFIGURE_ARGS += \
+	--disable-documentation \
+	--disable-ssp \
+	--disable-assert \
+	--enable-system-shared-lib
+
+TARGET_CFLAGS += -flto
+TARGET_LDFLAGS += -Wl,--gc-sections,--as-needed
+
+$(foreach component,$(SHADOWSOCKSR_COMPONENTS), \
+  $(eval $(call BuildPackage,shadowsocksr-libev-ssr-$(component))) \
+)
 $(eval $(call BuildPackage,shadowsocksr-libev-alt))
 $(eval $(call BuildPackage,shadowsocksr-libev-server))
-$(eval $(call BuildPackage,shadowsocksr-libev-ssr-local))
