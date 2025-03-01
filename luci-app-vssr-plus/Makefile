@@ -5,7 +5,7 @@ PKG_VERSION:=1.33
 PKG_RELEASE:=4-20200414
 
 PKG_CONFIG_DEPENDS:= CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks \
-	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_V2ray \
+	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_v2ray-core \
         CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Trojan \
 	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Kcptun:kcptun \
 	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_ShadowsocksR_Server \
@@ -35,8 +35,8 @@ config PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks
 	bool "Include Shadowsocks New Version"
 	default y
 	
-config PACKAGE_$(PKG_NAME)_INCLUDE_V2ray
-	bool "Include V2ray"
+config PACKAGE_$(PKG_NAME)_INCLUDE_v2ray-core
+	bool "Include v2ray-core"
 	default y
 
 config PACKAGE_$(PKG_NAME)_INCLUDE_Trojan
@@ -132,7 +132,7 @@ define Package/luci-app-vssr-plus
 	PKGARCH:=all
 	DEPENDS:=+shadowsocksr-libev-alt +ipset +ip-full +iptables-mod-tproxy +dnsmasq-full +coreutils +coreutils-base64 +bash +pdnsd-alt +wget  +tcping +lua-maxminddb +lua +luasocket +jshn +lua-cjson +coreutils-nohup  +curl \
             +PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks:shadowsocks-libev-ss-redir \
-            +PACKAGE_$(PKG_NAME)_INCLUDE_V2ray:v2ray \
+            +PACKAGE_$(PKG_NAME)_INCLUDE_v2ray-core:v2ray-core \
             +PACKAGE_$(PKG_NAME)_INCLUDE_Trojan:trojan \
             +PACKAGE_$(PKG_NAME)_INCLUDE_Kcptun:kcptun-client \
             +PACKAGE_$(PKG_NAME)_INCLUDE_ShadowsocksR_Server:shadowsocksr-libev-server \
