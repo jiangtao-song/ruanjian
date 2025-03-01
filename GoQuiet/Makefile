@@ -1,62 +1,88 @@
 #
-# Copyright (C) 2018 Andrea Muratori <andrea.m4niac@gmail.com>
+# Copyright (C) 2015-2016 OpenWrt.org
 #
 # This is free software, licensed under the GNU General Public License v3.
-# See /LICENSE for more information.
 #
 
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=GoQuiet
 PKG_VERSION:=1.2.2
-PKG_RELEASE:=1
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_URL:=https://github.com/cbeuw/GoQuiet.git
-PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)-$(PKG_RELEASE)
-PKG_SOURCE_VERSION:=22b290b314ad6a005659c9afece8f95898dd62c1
-PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION)-$(PKG_SOURCE_VERSION).tar.gz
+PKG_MIRROR_HASH:=d16557d89ac909877128729590e34a3c7a9b430000525ed133e2fffb56a0310a
+PKG_SOURCE_VERSION:=013cdfdf72000dcd4691799c37a0cf960ab4c82f
 
-PKG_LICENSE:=GPLv3
-PKG_LICENSE_FILES:=LICENSE
-PKG_MAINTAINER:=Andrea Muratori <andrea.m4niac@gmail.com>
+PKG_SOURCE_SUBDIR:=$(PKG_NAME)
+PKG_SOURCE:=$(PKG_SOURCE_SUBDIR)-$(PKG_VERSION)-$(PKG_SOURCE_VERSION).tar.gz
+PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_SOURCE_SUBDIR)
 
-PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)/$(PKG_SOURCE_SUBDIR)
-
-PKG_INSTALL:=1
-PKG_FIXUP:=autoreconf
-PKG_USE_MIPS16:=0
+PKG_BUILD_DEPENDS:=golang/host
 PKG_BUILD_PARALLEL:=1
+PKG_USE_MIPS16:=0
+
+GO_PKG:=github.com/cbeuw/GoQuiet
+GO_PKG_LDFLAGS:=-s -w
 
 include $(INCLUDE_DIR)/package.mk
+include $(TOPDIR)/feeds/packages/lang/golang/golang-package.mk
 
-define Package/GoQuiet/Default
-	SECTION:=net
-	CATEGORY:=Network
-	TITLE:=GoQuiet
-	URL:=https://github.com/cbeuw/GoQuiet/
+define Package/gq-client
+  SECTION:=net
+  CATEGORY:=Network
+  TITLE:=GoQuiet Client
+  DEPENDS:=$(GO_ARCH_DEPENDS) +libpthread
+  URL:=https://github.com/cbeuw/GoQuiet
+  SUBMENU:=Web Servers/Proxies
 endef
 
-Package/gq-client = $(call Package/GoQuiet/Default)
-Package/gq-server = $(call Package/GoQuiet/Default)
+define Package/gq-server
+  SECTION:=net
+  CATEGORY:=Network
+  TITLE:=GoQuiet Server
+  DEPENDS:=$(GO_ARCH_DEPENDS) +libpthread
+  URL:=https://github.com/cbeuw/GoQuiet
+  SUBMENU:=Web Servers/Proxies
+endef
 
 define Package/gq-client/description
-A shadowsocks plugin that obfuscates the traffic as normal HTTPS traffic and disguises the proxy server as a normal webserver.
-
-Package/gq-server/description = $(Package/simple-obfs/description)
+GoQuiet-Client
 endef
 
-CONFIGURE_ARGS += --disable-ssp --disable-documentation --disable-assert
+define Package/gq-server/description
+GoQuiet-Server
+endef
+
+define Build/Prepare
+	tar -zxf $(DL_DIR)/$(PKG_SOURCE) -C $(PKG_BUILD_DIR) --strip-components 1
+endef
+
+define Build/Configure
+endef
+
+define Build/Compile
+	$(eval GO_PKG_BUILD_PKG:=$(GO_PKG)/cmd/gq-client)
+	$(call GoPackage/Build/Configure)
+	$(call GoPackage/Build/Compile)
+	$(STAGING_DIR_HOST)/bin/upx --lzma --best $(GO_PKG_BUILD_BIN_DIR)/gq-client
+	$(eval GO_PKG_BUILD_PKG:=$(GO_PKG)/cmd/gq-server)
+	$(call GoPackage/Build/Configure)
+	$(call GoPackage/Build/Compile)
+	$(STAGING_DIR_HOST)/bin/upx --lzma --best $(GO_PKG_BUILD_BIN_DIR)/gq-server
+endef
 
 define Package/gq-client/install
 	$(INSTALL_DIR) $(1)/usr/bin
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/src/gq-client $(1)/usr/bin
+	$(INSTALL_BIN) $(GO_PKG_BUILD_BIN_DIR)/gq-client $(1)/usr/bin/
 endef
 
 define Package/gq-server/install
 	$(INSTALL_DIR) $(1)/usr/bin
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/src/gq-server $(1)/usr/bin
+	$(INSTALL_BIN) $(GO_PKG_BUILD_BIN_DIR)/gq-server $(1)/usr/bin/
 endef
 
+$(eval $(call GoBinPackage,gq-client))
+$(eval $(call GoBinPackage,gq-server))
 $(eval $(call BuildPackage,gq-client))
 $(eval $(call BuildPackage,gq-server))
