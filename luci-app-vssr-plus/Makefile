@@ -19,7 +19,7 @@ PKG_CONFIG_DEPENDS:= CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks \
 	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_dnsforwarder \
 	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_ChinaDNS \
 	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_haproxy \
-        CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_udpspeeder \
+        CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_UDPspeeder \
         CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_udp2raw-tunnel \
 	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_privoxy \
 	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_simple-obfs\
@@ -104,7 +104,7 @@ config PACKAGE_$(PKG_NAME)_INCLUDE_simple-obfs-server
 	default y
 	
 config PACKAGE_$(PKG_NAME)_INCLUDE_udpspeeder
-	bool "Include udpspeeder"
+	bool "Include UDPspeeder"
 	default y
 
 config PACKAGE_$(PKG_NAME)_INCLUDE_udp2raw-tunnel
@@ -147,7 +147,7 @@ define Package/luci-app-vssr-plus
             +PACKAGE_$(PKG_NAME)_INCLUDE_ChinaDNS:ChinaDNS \
             +PACKAGE_$(PKG_NAME)_INCLUDE_haproxy:haproxy \
             +PACKAGE_$(PKG_NAME)_INCLUDE_privoxy:privoxy \
-            +PACKAGE_$(PKG_NAME)_INCLUDE_udpspeeder:udpspeeder \
+            +PACKAGE_$(PKG_NAME)_INCLUDE_UDPspeeder:UDPspeeder \
             +PACKAGE_$(PKG_NAME)_INCLUDE_udp2raw-tunnel:udp2raw-tunnel \
             +PACKAGE_$(PKG_NAME)_INCLUDE_simple-obfs:simple-obfs \
             +PACKAGE_$(PKG_NAME)_INCLUDE_simple-obfs-server:simple-obfs-server \
