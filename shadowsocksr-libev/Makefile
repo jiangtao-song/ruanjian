@@ -37,6 +37,8 @@ define Package/shadowsocksr-libev/Default
     URL:=https://github.com/shadowsocksrr/shadowsocksr-libev
     DEPENDS:=+libev +libsodium +libopenssl +libpthread +libpcre2 +libudns +zlib
   endef
+Package/shadowsocksr-libev-server = $(Package/shadowsocksr-libev)
+Package/shadowsocksr-libev-alt = $(Package/shadowsocksr-libev)
 
 define Package/shadowsocksr-libev-alt/install
 	$(INSTALL_DIR) $(1)/usr/bin
@@ -62,8 +64,6 @@ define shadowsocksr-libev/templates
   )
 endef
 $(eval $(call shadowsocksr-libev/templates))
-Package/shadowsocksr-libev-server = $(Package/shadowsocksr-libev)
-Package/shadowsocksr-libev-alt = $(Package/shadowsocksr-libev)
 
 CONFIGURE_ARGS += \
 	--disable-documentation \
