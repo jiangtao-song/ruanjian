@@ -103,7 +103,7 @@ config PACKAGE_$(PKG_NAME)_INCLUDE_simple-obfs-server
 	bool "Include simple-obfs-server"
 	default y
 	
-config PACKAGE_$(PKG_NAME)_INCLUDE_udpspeeder
+config PACKAGE_$(PKG_NAME)_INCLUDE_UDPspeeder
 	bool "Include UDPspeeder"
 	default y
 
