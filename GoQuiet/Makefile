@@ -44,6 +44,7 @@ define Package/gq-client/description
 A shadowsocks plugin that obfuscates the traffic as normal HTTPS traffic and disguises the proxy server as a normal webserver.
 
 Package/gq-server/description = $(Package/simple-obfs/description)
+endef
 
 CONFIGURE_ARGS += --disable-ssp --disable-documentation --disable-assert
 
