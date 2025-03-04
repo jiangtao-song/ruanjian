@@ -135,7 +135,7 @@ define Package/luci-app-vssr-plus
             +PACKAGE_$(PKG_NAME)_INCLUDE_v2ray-core:v2ray-core \
             +PACKAGE_$(PKG_NAME)_INCLUDE_Trojan:trojan \
             +PACKAGE_$(PKG_NAME)_INCLUDE_Kcptun:kcptun-client \
-            +PACKAGE_$(PKG_NAME)_INCLUDE_ShadowsocksR_Server:shadowsocksr-libev-server \
+            +PACKAGE_$(PKG_NAME)_INCLUDE_ShadowsocksR_Server:shadowsocksr-libev-ssr-server \
             +PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Server:shadowsocks-libev-ss-server \
             +PACKAGE_$(PKG_NAME)_INCLUDE_ShadowsocksR_Socks:shadowsocksr-libev-ssr-local \
             +PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Socks:shadowsocks-libev-ss-local \
